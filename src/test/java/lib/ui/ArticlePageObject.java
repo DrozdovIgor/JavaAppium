@@ -3,22 +3,27 @@ package lib.ui;
 import io.appium.java_client.AppiumDriver;
 import lib.Platform;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+import java.rmi.Remote;
 
 
 abstract public class ArticlePageObject extends MainPageObject
 {
     protected static String
     TITLE,
+    TEXT,
     FOOTER_ELEMENT,
     OPTION_BUTTON,
     OPTION_ADD_TO_MY_LIST_BUTTON,
+    OPTION_REMOVE_FROM_MY_LIST_BUTTON,
     ADD_TO_MY_LIST_OVERLAY,
     MY_LIST_NAME_INPUT,
     MY_LIST_OK_BUTTON,
     CLOSE_ARTICLE_BUTTON;
 
 
-    public ArticlePageObject (AppiumDriver driver)
+    public ArticlePageObject (RemoteWebDriver driver)
     {
         super(driver);
     }
@@ -28,22 +33,48 @@ abstract public class ArticlePageObject extends MainPageObject
         return this.waitForElementPresent((TITLE), "Cannot find article title on page", 15);
     }
 
+    public WebElement waitForTextElement ()
+    {
+        return this.waitForElementPresent((TEXT), "Cannot find part of text on page", 15);
+    }
+
+    public String getArticleText () {
+
+        WebElement text_element = waitForTextElement();
+        if (Platform.getInstance().isAndroid()) {
+            return text_element.getAttribute("text");
+        } else if (Platform.getInstance().isIOS()) {
+            return text_element.getAttribute("name");
+        } else {
+            return text_element.getText();
+        }
+    }
+
+
     public String getArticleTitle ()
     {
         WebElement title_element = waitForTitleElement();
         if (Platform.getInstance().isAndroid()) {
             return title_element.getAttribute("text");
-        } else {
+        } else if (Platform.getInstance().isIOS()) {
             return title_element.getAttribute("name");
+        } else {
+            return title_element.getText();
         }
     }
 
     public void swipeToFooter ()
     {
         if (Platform.getInstance().isAndroid())
-        {this.swipeUpToFindElement((FOOTER_ELEMENT), "Cannot find the end of article", 20);}
-     else
-    {this.swipeUpTillElementAppear((FOOTER_ELEMENT),"Cannot find the end of article",40);}
+        {
+            this.swipeUpToFindElement((FOOTER_ELEMENT), "Cannot find the end of article", 20);
+        }
+     else if (Platform.getInstance().isIOS()){
+        this.swipeUpTillElementAppear((FOOTER_ELEMENT),"Cannot find the end of article",40);
+         }
+     else {
+         this.scrollWebPageTillElementNotVisible(FOOTER_ELEMENT,"Cannot find the end of Article",40);
+        }
 
     }
 
@@ -96,50 +127,74 @@ abstract public class ArticlePageObject extends MainPageObject
 
     public void addArticlesToMySaved ()
     {
+        if (Platform.getInstance().isMW()) {
+        this.removedArticleFromSavedIfItAdded();
+        }
         this.waitForElementAndClick(OPTION_ADD_TO_MY_LIST_BUTTON, "Cannot find option to add article to reading list", 5);
+    }
+
+    public void removedArticleFromSavedIfItAdded ()
+    {
+        if (this.isElementPresent(OPTION_REMOVE_FROM_MY_LIST_BUTTON))
+        {
+            this.waitForElementAndClick(OPTION_REMOVE_FROM_MY_LIST_BUTTON,"Cannot click button to remove article from saved",1);
+            this.waitForElementPresent(OPTION_ADD_TO_MY_LIST_BUTTON,"Cannot find button to add article to saved list after removing it from this list before",1);
+        }
     }
 
     public void closeArticle ()
     {
-        this.waitForElementAndClick(
-                (CLOSE_ARTICLE_BUTTON),
-                "Can't close article, can't find X link",
-                5
-        );
+        if ((Platform.getInstance().isIOS()) || (Platform.getInstance().isAndroid())) {
+
+            this.waitForElementAndClick(
+                    (CLOSE_ARTICLE_BUTTON),
+                    "Can't close article, can't find X link",
+                    5
+            );
+        }
+            else {
+            System.out.println("Method closeArticle() does nothing for platform" + Platform.getInstance().getPlatformVar());
+        }
+
     }
+
 
     public void addMoreArticleToMyList (String name_of_folder)
     {
-        this.waitForElementAndClick(
-                (OPTION_BUTTON),
-                "Cannot find button to open article options",
-                5
-        );
+        if ((Platform.getInstance().isAndroid()) || (Platform.getInstance().isMW())) {
 
 
-        this.waitForElementPresent ( //ожидание элемента
-                (OPTION_ADD_TO_MY_LIST_BUTTON),
-                "Cannot find article title",
-                15
-        );
+            this.waitForElementAndClick(
+                    (OPTION_BUTTON),
+                    "Cannot find button to open article options",
+                    5
+            );
 
-        this.waitForElementAndClick(
-                (OPTION_ADD_TO_MY_LIST_BUTTON),
-                "Cannot find option to add article to reading list",
-                5
-        );
 
-        this.waitForElementPresent (
-                ("xpath://*[@text='" +name_of_folder+ "']"),
-                "Cannot find article title",
-                15
-        );
+            this.waitForElementPresent( //ожидание элемента
+                    (OPTION_ADD_TO_MY_LIST_BUTTON),
+                    "Cannot find article title",
+                    15
+            );
 
-        this.waitForElementAndClick( // добавили вторую статью в сохраненки
-                ("xpath://*[@text='" + name_of_folder + "']"),
-                "Cannot find option to add article to reading list",
-                5
-        );
+            this.waitForElementAndClick(
+                    (OPTION_ADD_TO_MY_LIST_BUTTON),
+                    "Cannot find option to add article to reading list",
+                    5
+            );
+
+            this.waitForElementPresent(
+                    ("xpath://*[@text='" + name_of_folder + "']"),
+                    "Cannot find article title",
+                    15
+            );
+
+            this.waitForElementAndClick( // добавили вторую статью в сохраненки
+                    ("xpath://*[@text='" + name_of_folder + "']"),
+                    "Cannot find option to add article to reading list",
+                    5
+            );
+        }
 
 
     }

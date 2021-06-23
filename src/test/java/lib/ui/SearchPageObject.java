@@ -1,6 +1,8 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public abstract class SearchPageObject extends MainPageObject
 {
@@ -18,7 +20,7 @@ public abstract class SearchPageObject extends MainPageObject
             SEARCH_RESULT_BY_TITLE_OR_DESCRIPTION_TPL;
 
 
-    public SearchPageObject (AppiumDriver driver)
+    public SearchPageObject (RemoteWebDriver driver)
     {
         super(driver);
     }
@@ -55,8 +57,8 @@ public abstract class SearchPageObject extends MainPageObject
         this.waitForElementNotPresent((SEARCH_CANCEL_BUTTON), "Search cancel button is still present!",5);
     }
 
-    public void clickCancelSearch ()
-    {
+    public void clickCancelSearch () {
+        this.waitForElementPresent((SEARCH_CANCEL_BUTTON), "Cannot find and click search cancel button.", 5);
         this.waitForElementAndClick((SEARCH_CANCEL_BUTTON), "Cannot find and click search cancel button.", 5);
     }
 
@@ -136,6 +138,11 @@ public abstract class SearchPageObject extends MainPageObject
                 5
         );
 
+    }
+
+    public void clickWithSleep (String locator) throws InterruptedException  {
+        Thread.sleep(1000);
+        this.waitForElementAndClick(locator, "Cannot call auth menu", 10);
     }
 
 
