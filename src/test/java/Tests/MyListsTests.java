@@ -1,5 +1,7 @@
 package Tests;
 
+import io.qameta.allure.*;
+import io.qameta.allure.junit4.DisplayName;
 import lib.CoreTestCase;
 import lib.Platform;
 import lib.ui.*;
@@ -7,6 +9,7 @@ import lib.ui.factories.ArticlePageObjectFactory;
 import lib.ui.factories.MyListsPageObjectFactory;
 import lib.ui.factories.NavigationUIFactory;
 import lib.ui.factories.SearchPageObjectFactory;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class MyListsTests extends CoreTestCase
@@ -17,6 +20,11 @@ public class MyListsTests extends CoreTestCase
     password = "drozdov2010";
 
     @Test
+    @Features(value = {@Feature(value="Search"), @Feature(value="Article"), @Feature(value="List")})
+    @DisplayName("Save article to my list and delete after that")
+    @Description("We save 'Java Object-oriented programming language' article to my list and delete it")
+    @Step("Starting test testSaveFirstArticleToMyList")
+    @Severity(value = SeverityLevel.BLOCKER)
     public void testSaveFirstArticleToMyList()
     {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
@@ -41,7 +49,7 @@ public class MyListsTests extends CoreTestCase
             Auth.submitForm();
 
             ArticlePageObject.waitForTitleElement();
-            assertEquals("We are not on the same page after login.", article_title, ArticlePageObject.getArticleTitle());
+            Assert.assertEquals("We are not on the same page after login.", article_title, ArticlePageObject.getArticleTitle());
 
             ArticlePageObject.addArticlesToMySaved();
         }
@@ -63,6 +71,11 @@ public class MyListsTests extends CoreTestCase
     }
 
     @Test
+    @Features(value = {@Feature(value="Search"), @Feature(value="Article"), @Feature(value="List")})
+    @DisplayName("Save two articles to my list and delete one after that")
+    @Description("We save 'Java Object-oriented programming language' and 'Java JavaScript' article to my list and delete first article")
+    @Step("Starting test testEX17SaveTwoArticles")
+    @Severity(value = SeverityLevel.BLOCKER)
 
     public void testEX17SaveTwoArticles() {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
@@ -87,7 +100,7 @@ public class MyListsTests extends CoreTestCase
             Auth.submitForm();
 
             ArticlePageObject.waitForTitleElement();
-            assertEquals("We are not on the same page after login.", article_title, ArticlePageObject.getArticleTitle());
+            Assert.assertEquals("We are not on the same page after login.", article_title, ArticlePageObject.getArticleTitle());
 
             ArticlePageObject.addArticlesToMySaved();
         }
@@ -127,7 +140,7 @@ public class MyListsTests extends CoreTestCase
 
         String article_text_after_add = ArticlePageObject.getArticleText();
 
-        assertEquals(
+        Assert.assertEquals(
                 "Article text have been change after add",
                 article_text_before_add,
                 article_text_after_add
@@ -138,6 +151,11 @@ public class MyListsTests extends CoreTestCase
 
 
     @Test
+    @Features(value = {@Feature(value="Search"), @Feature(value="Article"), @Feature(value="List")})
+    @DisplayName("Save two articles to my list and delete one after that")
+    @Description("Its only for iOS and Android. We save 'Java Object-oriented programming language' and 'Java JavaScript' article to my list and delete first article")
+    @Step("Starting test testEX5SaveTwoArticles")
+    @Severity(value = SeverityLevel.BLOCKER)
     public void testEX5SaveTwoArticles()
     {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
@@ -170,7 +188,7 @@ public class MyListsTests extends CoreTestCase
 
         String article_title_after_add = ArticlePageObject.getArticleTitle();
 
-        assertEquals(
+        Assert.assertEquals(
                 "Article title have been change after add",
                 article_title_before_add,
                 article_title_after_add

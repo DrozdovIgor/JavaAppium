@@ -1,6 +1,7 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import io.qameta.allure.Step;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -27,11 +28,14 @@ public abstract class SearchPageObject extends MainPageObject
 
     /* TEMPLATES METHODS */
 
+    @Step("TPL Method get result search element")
+
     private static String getResultSearchElement (String substring)
     {
         return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", substring);
     }
 
+    @Step("TPL Method get result search title and description")
     private static String getResultSearchTitleAndDescription (String substring_title, String substring_description)
     {
         return  SEARCH_RESULT_BY_TITLE_OR_DESCRIPTION_TPL.replace("{TITLE}", substring_title).replace("{DESCRIPTION}", substring_description);
@@ -39,7 +43,7 @@ public abstract class SearchPageObject extends MainPageObject
 
 
     /* TEMPLATES METHODS */
-
+    @Step("Initializing the search field")
     public void initSearchInput ()
     {
         this.waitForElementAndClick((SEARCH_INIT_ELEMENT), "Cannot find search init element", 5);
@@ -47,40 +51,46 @@ public abstract class SearchPageObject extends MainPageObject
 
     }
 
+    @Step("Waiting for button to cancel search result")
     public void waitForCancelButtonToAppear()
     {
         this.waitForElementPresent((SEARCH_CANCEL_BUTTON), "Cannot find search cancel button!",5);
     }
 
+    @Step("Waiting for search cancel button to disappear")
     public void waitForCancelButtonToDisappear()
     {
         this.waitForElementNotPresent((SEARCH_CANCEL_BUTTON), "Search cancel button is still present!",5);
     }
 
+    @Step("Clicking button to cancel search result")
     public void clickCancelSearch () {
         this.waitForElementPresent((SEARCH_CANCEL_BUTTON), "Cannot find and click search cancel button.", 5);
         this.waitForElementAndClick((SEARCH_CANCEL_BUTTON), "Cannot find and click search cancel button.", 5);
     }
 
 
-
+    @Step("Typing '{search_line}' to the search line")
     public void typeSearchLine (String search_line)
     {
         this.waitForElementAndSendKeys((SEARCH_INPUT),search_line, "Cannot find and type into search input",5);
     }
 
+    @Step("Waiting for search result")
     public void waitForSearchResult (String substring)
     {
         String search_result_xpath = getResultSearchElement(substring);
         this.waitForElementPresent((search_result_xpath), "Cannot find search result with substring " + substring);
     }
 
+    @Step("Waiting for search result and select an article by substring in article title")
     public void clickByArticleWithSubstring (String substring)
     {
         String search_result_xpath = getResultSearchElement(substring);
         this.waitForElementAndClick((search_result_xpath), "Cannot find and click search result with substring " + substring, 10);
     }
 
+    @Step("Getting amount of found articles")
     public int getAmountOfFoundArticles ()
     {
         this.waitForElementPresent(
@@ -91,17 +101,22 @@ public abstract class SearchPageObject extends MainPageObject
         return this.getAmountofElements((SEARCH_RESULT_ELEMENT));
     }
 
+    @Step("Waiting for empty result label")
     public void waitForEmptyResultsLabel ()
     {
         this.waitForElementPresent((SEARCH_EMPTY_RESULT_ELEMENT), "Cannot find empty result element", 15);
 
     }
 
+
+    @Step("Make sure there are no results for the search")
     public void assertThereIsNotResultOfSearch ()
     {
         this.assertElementNotPresent((SEARCH_RESULT_ELEMENT), "We supposed not to find any resuts");
     }
 
+
+    @Step("Clear input box")
     public void waitForTextInSearchAndClear ()
     {
         this.waitForElementAndClear( // очистка поля
@@ -111,17 +126,20 @@ public abstract class SearchPageObject extends MainPageObject
         );
     }
 
+    @Step("Make sure that input box is empty")
     public void waitForSearchBoxIsEmpty (String substring)
     {
         String search_result_xpath = getResultSearchElement(substring);
         this.waitForElementNotPresent((search_result_xpath), "Search box is not empty ", 5);
     }
 
+    @Step("Make sure that search value = expected value")
     public void checkSearch (String expected_value)
     {
         this.assertElementHasText((SEARCH_INPUT),expected_value,"Search input don't match with expected value");
     }
 
+    @Step("Make sure that 3 search value = 3 expected value")
     public void checkMultipleTitleForText (String input_text)
     {
         this.assertElementHasPartOfText((SEARCH_TITLE_RESULT1),input_text, "Entered text " +input_text+ " is not contained in title 1");
@@ -129,6 +147,8 @@ public abstract class SearchPageObject extends MainPageObject
         this.assertElementHasPartOfText((SEARCH_TITLE_RESULT3),input_text, "Entered text " +input_text+ " is not contained in title 3");
     }
 
+
+    @Step("Make sure that search title and description = expected title and description")
     public void waitForElementByTitleAndDescription (String title, String description)
     {
         String search_result_xpath_title_and_description = getResultSearchTitleAndDescription(title,description);
@@ -139,15 +159,6 @@ public abstract class SearchPageObject extends MainPageObject
         );
 
     }
-
-    public void clickWithSleep (String locator) throws InterruptedException  {
-        Thread.sleep(1000);
-        this.waitForElementAndClick(locator, "Cannot call auth menu", 10);
-    }
-
-
-
-
 
 
 }

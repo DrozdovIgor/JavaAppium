@@ -1,6 +1,7 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import io.qameta.allure.Step;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class WelcomePageObject extends MainPageObject {
@@ -13,8 +14,6 @@ public class WelcomePageObject extends MainPageObject {
     NEXT_LINK = "id:Next",
     GET_STARTED_BUTTON = "id:Get started",
     SKIP = "id:Skip";
-
-
 
     public WelcomePageObject(RemoteWebDriver driver)
     {
